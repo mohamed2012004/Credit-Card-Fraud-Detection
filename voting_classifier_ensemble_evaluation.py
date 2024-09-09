@@ -7,9 +7,6 @@ from sklearn.metrics import roc_auc_score, average_precision_score, confusion_ma
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 
-# Suppress DataConversionWarnings
-warnings.filterwarnings('ignore', category=DataConversionWarning)
-
 def main():
     # Load the original and resampled data
     data_test = pd.read_csv('test.csv')
