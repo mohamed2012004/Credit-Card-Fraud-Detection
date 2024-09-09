@@ -53,7 +53,7 @@ This project aims to build and evaluate machine learning models to detect fraudu
 After completing the project, a comprehensive dashboard was created to visualize and compare the performance of different techniques. The analysis focused on several key metrics: False Negatives (FN), Average Precision (AP), ROC AUC, False Positives (FP), True Negatives (TN), and True Positives (TP). Here’s a summary of the findings:
 
 ### 1. True Negative Rate (TNR)
-- **Best Performance**: Imbalanced Data
+- **Highest Rate**: Imbalanced Data
   - **Lower Sensitivity (True Positive Rate)**: A high TNR might come at the expense of a lower True Positive Rate (TPR), meaning the model may miss a significant number of fraudulent transactions. This is critical in fraud detection where missing actual fraud cases can lead to financial losses.
   - **Increased False Negatives (FN)**: With a focus on high TNR, the model may become too conservative, resulting in a higher number of false negatives. In the context of credit card fraud, this means that some fraudulent transactions might go undetected.
 
