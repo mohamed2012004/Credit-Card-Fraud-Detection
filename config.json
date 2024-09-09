@@ -1,0 +1,29 @@
+{
+  "logistic_regression": {
+    "C": [0.1, 0.2, 1],
+    "penalty": ["l2"],
+    "max_iter": 1000,
+    "solver": "lbfgs"
+  },
+  "random_forest": {
+    "n_estimators": 6,
+    "max_depth": 3,
+    "random_state": 42
+  },
+  "voting_classifier": {
+    "voting": "soft",
+    "weights": [2, 1.5]
+  },
+  "cross_validation": {
+    "n_splits": 3,
+    "random_state": 42,
+    "shuffle": true
+  },
+    "smote": {
+    "random_state": 1,
+    "k_neighbors": 3
+  },
+  "random_under_sampler": {
+    "random_state": 1
+  }
+}
