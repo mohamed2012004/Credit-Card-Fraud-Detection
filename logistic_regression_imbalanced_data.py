@@ -1,3 +1,4 @@
+from collections import Counter
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score, \
@@ -14,6 +15,8 @@ y_train = data_train.iloc[:, -1]
 x_test = data_test.iloc[:, :-1]
 y_test = data_test.iloc[:, -1]
 
+counter=Counter(y_train)
+print('Class distribution:', dict(counter))  # Print class distribution in the training set
 
 # Define a function for MinMax Scaling
 def fit_transform(data):
