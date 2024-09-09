@@ -61,9 +61,3 @@ After completing the project, a comprehensive dashboard was created to visualize
 - **Highest Rate**: Voting Classifier
   - **Observation**: The Voting Classifier showed the highest False Positive Rate (FPR), meaning it incorrectly flagged more legitimate transactions as fraudulent.
   - **Significance**: While the Voting Classifier improves overall performance, its higher FPR suggests that it may lead to more false alarms. Balancing this with other metrics is crucial to minimize disruption for legitimate users.
-
-### 3. Accuracy
-- **Best Accuracy**: Under Sampling
-  - **Observation**: The undersampling technique yielded the highest accuracy.
-  - **Significance**: High accuracy indicates a well-balanced model performance where the number of correct predictions (both fraudulent and non-fraudulent) is maximized. However, it’s important to consider other metrics to ensure that accuracy improvements do not come at the expense of higher FPR or lower TNR.
-
