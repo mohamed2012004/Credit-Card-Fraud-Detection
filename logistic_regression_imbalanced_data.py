@@ -15,6 +15,7 @@ y_train = data_train.iloc[:, -1]
 x_test = data_test.iloc[:, :-1]
 y_test = data_test.iloc[:, -1]
 
+# Class distribution
 counter=Counter(y_train)
 print('Class distribution:', dict(counter))  # Print class distribution in the training set
 
