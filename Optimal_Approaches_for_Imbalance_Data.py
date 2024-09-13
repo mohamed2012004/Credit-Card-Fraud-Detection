@@ -8,6 +8,9 @@ import numpy as np
 from sklearn.linear_model import LogisticRegression
 import json
 
+from sklearn.preprocessing import MinMaxScaler
+
+
 class ImbalanceDataHandler:
     def __init__(self, config_file):
         """
@@ -28,6 +31,7 @@ class ImbalanceDataHandler:
         self.best_model = None
         self.best_X_train = None
         self.best_y_train = None
+        self.scaler = MinMaxScaler()
 
     def resample_and_evaluate(self, X_train, y_train, X_test, y_test):
         """
@@ -47,7 +51,7 @@ class ImbalanceDataHandler:
                            k_neighbors=smote_config.get("k_neighbors", 3),
                            sampling_strategy={1: max_count}).fit_resample(X_train, y_train),  # OverSampling
             "RandomUnderSampler": RandomUnderSampler(random_state=random_under_sampler_config.get("random_state", 1),
-                                                     sampling_strategy={0: min_count}).fit_resample(
+                                                     sampling_strategy={0: min_count*100}).fit_resample(
                 X_train, y_train)  # UnderSampling
         }
 
@@ -62,7 +66,8 @@ class ImbalanceDataHandler:
         for method_name, (X_res, y_res) in methods.items():
             # Create pipeline with resampling and logistic regression model
             pipeline = ImbPipeline(steps=[('model', self.model)])
-
+            X_res_scaled = self.scaler.fit_transform(X_res)
+            X_test_scaled = self.scaler.transform(X_test)
             # Perform Grid Search
             grid_search = GridSearchCV(
                 pipeline,
@@ -71,9 +76,9 @@ class ImbalanceDataHandler:
                 scoring='average_precision'
             )
 
-            grid_search.fit(X_res, y_res)
+            grid_search.fit(X_res_scaled, y_res)
 
-            y_pred_prob = grid_search.best_estimator_.predict_proba(X_test)[:, 1]
+            y_pred_prob = grid_search.best_estimator_.predict_proba(X_test_scaled)[:, 1]
             roc_auc = roc_auc_score(y_test, y_pred_prob)
             ap = average_precision_score(y_test, y_pred_prob)
 
