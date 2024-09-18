@@ -2,12 +2,12 @@ from collections import Counter
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score, accuracy_score, \
-    average_precision_score
+    average_precision_score, f1_score
 from sklearn.preprocessing import MinMaxScaler
 
 # Load data
 data_train = pd.read_csv('train.csv')
-data_test = pd.read_csv('test.csv')
+data_test = pd.read_csv('val.csv')
 
 # Split data into features and target
 x_train = data_train.iloc[:, :-1]
@@ -15,7 +15,6 @@ y_train = data_train.iloc[:, -1]
 x_test = data_test.iloc[:, :-1]
 y_test = data_test.iloc[:, -1]
 
-# Class distribution
 counter=Counter(y_train)
 print('Class distribution:', dict(counter))  # Print class distribution in the training set
 
@@ -51,3 +50,4 @@ print(f"Accuracy Score: {accuracy_score(y_test, y_pred):.4f}")
 # Calculate Average Precision (AP) Score
 ap_score = average_precision_score(y_test, y_pred_prob)
 print(f"Average Precision Score: {ap_score:.4f}")
+print(f"F1 Score:{f1_score(y_test, y_pred):.3f}")
