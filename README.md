@@ -80,6 +80,6 @@ After completing the project, a comprehensive dashboard was created to visualize
 - After selecting the best metric, the Voting Classifier (combining Random Forest and Logistic Regression) is applied to further enhance the model's robustness and accuracy.
 
 ### Visual Representation
-To visualize these steps, the  images are showed 
+To visualize these steps, the  images are showed on the repo. 
 ## Importance of Findings
 These findings are critical for improving the effectiveness of credit card fraud detection. The careful comparison of resampling techniques and evaluation metrics helps identify the optimal approach for reducing both false positives and false negatives, thus minimizing financial risk while maintaining a smooth user experience. The steps taken, including the use of the Voting Classifier and balancing the metrics, demonstrate the importance of selecting the right combination of models and metrics in fraud detection.
