@@ -3,13 +3,14 @@ import warnings
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 from sklearn.exceptions import DataConversionWarning
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score, average_precision_score, confusion_matrix, classification_report
+from sklearn.metrics import roc_auc_score, average_precision_score, confusion_matrix, classification_report, f1_score
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 
+
 def main():
     # Load the original and resampled data
-    data_test = pd.read_csv('test.csv')
+    data_test = pd.read_csv('val.csv')
 
 
     # Split data into features and target
@@ -64,7 +65,6 @@ def main():
     print(f"Average Precision Score: {average_precision_score(y_test, y_pred_prob):.4f}")
     print(f"ROC AUC Score: {roc_auc_score(y_test, y_pred_prob):.4f}")
     print('Confusion Matrix:\n', confusion_matrix(y_test, y_pred))
-    print('\nClassification Report:\n', classification_report(y_test, y_pred))
-
+    print(f"F1 Score:{f1_score(y_test, y_pred):.3f}")
 if __name__ == '__main__':
     main()
