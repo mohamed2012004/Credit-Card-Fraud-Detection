@@ -8,9 +8,9 @@ This project aims to build and evaluate machine learning models to detect fraudu
 
 ## File Structure
 - 📂 `data_train.csv`: Training dataset with features and target variable.
-- 📂 `data_test.csv`: Testing dataset with features and target variable.
+- 📂 `data_val.csv`: Validation dataset with features and target variable.
 - ⚙️ `config.json`: Configuration file containing hyperparameters and resampling settings.
-- 🛠️ `Optimal_Approaches_for_Imbalance_Data.py`: Defines `ImbalanceDataHandler` class for handling imbalanced data.
+- 🛠️ `Optimal_Approaches_for_Imbalance_Data.py`: Defines `ImbalanceDataHandler` class for handling imbalanced data with flexibility to choose the evaluation metric (ROC AUC, AP, F-score).
 - 🧹 `preprocess_and_train.py`: Script for preprocessing data, scaling features, and training the initial Logistic Regression model.
 - 📊 `evaluate_models.py`: Script for evaluating models using a Voting Classifier.
 - 📁 `best_x_train_resampled.csv`: Resampled training features.
@@ -33,7 +33,7 @@ This project aims to build and evaluate machine learning models to detect fraudu
   - **Oversampling**: Increased the number of samples in the minority class.
   - **Undersampling**: Reduced the number of samples in the majority class.
 - **Model Evaluation**: Used GridSearchCV to find the best hyperparameters for each technique.
-- **Metrics**: Compared performance using ROC AUC and Average Precision (AP) metrics.
+- **Metrics**: Compared performance using ROC AUC, Average Precision (AP), and F-score metrics.
 
 ### 3. Saving Best Resampled Data
 - Saved the data resulting from the best resampling method into two separate files:
@@ -61,3 +61,12 @@ After completing the project, a comprehensive dashboard was created to visualize
 - **Highest Rate**: Voting Classifier
   - **Observation**: The Voting Classifier showed the highest False Positive Rate (FPR), meaning it incorrectly flagged more legitimate transactions as fraudulent.
   - **Significance**: While the Voting Classifier improves overall performance, its higher FPR suggests that it may lead to more false alarms. Balancing this with other metrics is crucial to minimize disruption for legitimate users.
+
+### 3. Performance by Metric (F-score)
+- **Voting Classifier After Each Metric**: Applied the Voting Classifier after each metric evaluation (ROC AUC, AP, and F-score).
+- **Dashboard Based on F-score**: The final dashboard was based on the F-score metric, providing a balanced view of precision and recall.
+- **Maximum FPR**: SMOTE showed the highest False Positive Rate.
+- **Maximum TNR**: Imbalanced data produced the highest True Negative Rate.
+
+## Importance of Findings
+These findings are critical for improving the effectiveness of credit card fraud detection. The careful comparison of resampling techniques and evaluation metrics helps identify the optimal approach for reducing both false positives and false negatives, thus minimizing financial risk while maintaining a smooth user experience. The steps taken, including the use of the Voting Classifier and balancing the metrics, demonstrate the importance of selecting the right combination of models and metrics in fraud detection.
