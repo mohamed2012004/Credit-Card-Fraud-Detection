@@ -1,22 +1,22 @@
 from collections import Counter
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
-from sklearn.metrics import roc_auc_score, average_precision_score
+from sklearn.metrics import f1_score, average_precision_score, roc_auc_score
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.pipeline import Pipeline as ImbPipeline
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 import json
-
 from sklearn.preprocessing import MinMaxScaler
 
 
 class ImbalanceDataHandler:
-    def __init__(self, config_file):
+    def __init__(self, config_file, metric):
         """
         Initialize the ImbalanceDataHandler with a configuration file.
 
         config_file: Path to the JSON configuration file.
+        metric: The evaluation metric to optimize ('f1', 'AP', 'ROC').
         """
         # Load configuration
         with open(config_file, 'r') as file:
@@ -32,6 +32,7 @@ class ImbalanceDataHandler:
         self.best_X_train = None
         self.best_y_train = None
         self.scaler = MinMaxScaler()
+        self.metric = metric
 
     def resample_and_evaluate(self, X_train, y_train, X_test, y_test):
         """
@@ -46,54 +47,60 @@ class ImbalanceDataHandler:
         random_under_sampler_config = self.config.get("random_under_sampler", {})
 
         methods = {
-            "Original": (X_train, y_train),  # No resampling
             "SMOTE": SMOTE(random_state=smote_config.get("random_state", 1),
                            k_neighbors=smote_config.get("k_neighbors", 3),
-                           sampling_strategy={1: max_count}).fit_resample(X_train, y_train),  # OverSampling
+                           sampling_strategy={1: max_count // 20}).fit_resample(X_train, y_train),  # OverSampling
             "RandomUnderSampler": RandomUnderSampler(random_state=random_under_sampler_config.get("random_state", 1),
-                                                     sampling_strategy={0: min_count*100}).fit_resample(
+                                                     sampling_strategy={0: min_count * 20}).fit_resample(
                 X_train, y_train)  # UnderSampling
         }
 
-        best_roc_auc = -np.inf
-        best_ap = -np.inf
+        best_score = -np.inf
 
         # Load cross-validation configuration
         cv_config = self.config["cross_validation"]
         skf = StratifiedKFold(n_splits=cv_config["n_splits"], random_state=cv_config["random_state"],
                               shuffle=cv_config["shuffle"])
 
+        metric_scoring = {'f1': 'f1', 'AP': 'average_precision', 'ROC': 'roc_auc'}
+
         for method_name, (X_res, y_res) in methods.items():
             # Create pipeline with resampling and logistic regression model
             pipeline = ImbPipeline(steps=[('model', self.model)])
             X_res_scaled = self.scaler.fit_transform(X_res)
             X_test_scaled = self.scaler.transform(X_test)
+
             # Perform Grid Search
             grid_search = GridSearchCV(
                 pipeline,
                 {'model__' + key: value for key, value in self.param_grid.items()},
                 cv=skf,
-                scoring='average_precision'
+                scoring=metric_scoring[self.metric]  # Dynamic metric selection
             )
 
             grid_search.fit(X_res_scaled, y_res)
 
-            y_pred_prob = grid_search.best_estimator_.predict_proba(X_test_scaled)[:, 1]
-            roc_auc = roc_auc_score(y_test, y_pred_prob)
-            ap = average_precision_score(y_test, y_pred_prob)
+            if self.metric == "f1":
+                y_pred = grid_search.best_estimator_.predict(X_test_scaled)
+                score = f1_score(y_test, y_pred)
+            else:
+                y_pred_proba = grid_search.best_estimator_.predict_proba(X_test_scaled)[:, 1]
+                if self.metric == "AP":
+                    score = average_precision_score(y_test, y_pred_proba)
+                elif self.metric == "ROC":
+                    score = roc_auc_score(y_test, y_pred_proba)
 
-            print(f"Method: {method_name}, ROC AUC: {roc_auc:.3f}, AP: {ap:.3f}")
-
-            if (roc_auc > best_roc_auc or
-                    (roc_auc == best_roc_auc and ap > best_ap)):
-                best_roc_auc = roc_auc
-                best_ap = ap
+            print(f"Method: {method_name}, {self.metric} score: {score:.3f}")
+            if score > best_score:
+                best_score = score
                 self.best_method = method_name
                 self.best_model = grid_search.best_estimator_
                 self.best_X_train = X_res
                 self.best_y_train = y_res
 
-        print(f"\nBest Resampling Method: {self.best_method} with ROC AUC: {best_roc_auc:.3f} and AP: {best_ap:.3f}")
+        print(f"\nBest Resampling Method: {self.best_method} with {self.metric}: {best_score:.3f}")
+        print(Counter(self.best_y_train))
+        print(50 * "-")
 
     def fit(self, X_train, y_train, X_test, y_test):
         """
@@ -101,6 +108,4 @@ class ImbalanceDataHandler:
         """
         self.resample_and_evaluate(X_train, y_train, X_test, y_test)
         return self.best_X_train, self.best_y_train
-
-
 
