@@ -35,9 +35,7 @@ imb_handler = ImbalanceDataHandler("config.json","f1")
 # Resample and get the best training data
 best_X_train, best_y_train = imb_handler.fit(x_train, y_train, x_test, y_test)
 
-# Save the resampled data
-pd.DataFrame(best_X_train).to_csv('best_x_train_resampled.csv', index=False)
-pd.DataFrame(best_y_train).to_csv('best_y_train_resampled.csv', index=False)
+
 
 
 # Feature scaling
