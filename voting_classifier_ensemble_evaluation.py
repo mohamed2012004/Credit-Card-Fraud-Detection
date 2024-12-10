@@ -26,6 +26,14 @@ def preprocess_data(X_train, Y_train, X_test, smote_config):
     """Handle imbalanced data and scale features."""
     counter = Counter(Y_train)
     max_count = max(counter.values())
+    
+    # Scale features
+    
+    scaler = MinMaxScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+ 
 
     # Handle imbalanced data with SMOTE
     smote = SMOTE(
@@ -33,13 +41,9 @@ def preprocess_data(X_train, Y_train, X_test, smote_config):
         k_neighbors=smote_config.get("k_neighbors", 5),
         sampling_strategy={1: max_count // 50}
     )
-    X_resampled, Y_resampled = smote.fit_resample(X_train, Y_train)
+    X_resampled, Y_resampled = smote.fit_resample(X_train_scaled, Y_train)
 
-    # Scale features
-    scaler = MinMaxScaler()
-    X_resampled_scaled = scaler.fit_transform(X_resampled)
-    X_test_scaled = scaler.transform(X_test)
-
+    
     return X_resampled_scaled, Y_resampled, X_test_scaled
 
 
